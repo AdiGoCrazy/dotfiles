@@ -1,0 +1,47 @@
+# ==============================================================================
+# HYPRLAND & WAYBAR RICE DEPENDENCIES
+# ==============================================================================
+
+# --- Compositor & Core Session ---
+hyprland
+hyprpaper
+hyprlock
+uwsm
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+xwaylandvideobridge
+
+# --- Bar, Launchers & Notifications ---
+waybar
+rofi
+wofi
+dunst
+wlogout
+
+# --- Media, Audio & OSD Controls ---
+grim
+slurp
+swappy
+playerctl
+brightnessctl
+pavucontrol
+alsa-utils
+libnotify
+bc
+
+# --- System & Hardware Management ---
+blueman
+network-manager-applet
+polkit-gnome
+xorg-xhost
+iwgtk
+
+# --- Terminal & File Manager ---
+kitty
+btop
+dolphin
+
+# --- Fonts & Icons ---
+ttf-jetbrains-mono-nerd
+ttf-nerd-fonts-symbols
+papirus-icon-theme

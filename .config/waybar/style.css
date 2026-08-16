@@ -1,0 +1,220 @@
+/* Softened global styles */
+* {
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/* Floating frosted glass capsule matching deep night valley */
+#waybar {
+    background-color: rgba(10, 10, 26, 0.65);
+    -blur: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    color: #e0def4;
+}
+
+/* --- LEFT REGION: Interactive Dev & Telemetry Hub --- */
+#network.speed {
+    color: #9ccfd8; /* Crisp twilight cyan */
+    background-image: linear-gradient(to bottom, rgba(83, 20, 83, 0.75), rgba(45, 10, 60, 0.5));
+    padding-left: 16px;
+    padding-right: 12px;
+    border-radius: 12px 0 0 12px;
+}
+
+#custom-gpu {
+    color: #c4a7e7; /* Soft pastel violet */
+    background-color: rgba(255, 255, 255, 0.03);
+    padding: 0 12px;
+}
+
+#custom-ollama {
+    color: #f6c177; /* Watchtower glowing warm yellow */
+    background-color: rgba(255, 255, 255, 0.03);
+    padding: 0 12px;
+}
+
+#custom-docker {
+    color: #9ccfd8; /* Matches sky cyan highlights */
+    background-color: rgba(255, 255, 255, 0.03);
+    padding-left: 12px;
+    padding-right: 16px;
+    border-radius: 0 12px 12px 0;
+}
+
+#network.speed:hover, #custom-gpu:hover, #custom-ollama:hover, #custom-docker:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* --- CENTER REGION: Locked Workspaces --- */
+#workspaces {
+    background-color: rgba(255, 255, 255, 0.03);
+    padding: 0 6px;
+    border-radius: 12px;
+}
+
+#workspaces button {
+    color: rgba(156, 207, 216, 0.3);
+    padding: 0 10px;
+    transition: all 0.2s ease-in-out;
+}
+
+#workspaces button.active {
+    color: #ffffff;
+    background-image: linear-gradient(to bottom, rgba(131, 6, 129, 0.85), rgba(66, 2, 73, 0.65));
+    border-radius: 10px;
+}
+
+#workspaces button:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+}
+
+/* --- RIGHT REGION: Hardware, Sound, and Connectivity --- */
+#cpu, #memory, #custom-storage, #pulseaudio, #network, #bluetooth, #battery, #custom-updates, #clock, #custom-power {
+    padding: 0 12px;
+    transition: all 0.2s ease;
+}
+
+#cpu {
+    color: #c4a7e7;
+    padding-left: 14px;
+}
+#memory {
+    color: #c4a7e7;
+    padding: 0 8px;
+}
+#custom-storage {
+    color: #c4a7e7;
+    padding-right: 14px;
+}
+#cpu:hover, #memory:hover, #custom-storage:hover {
+    background-color: rgba(196, 167, 231, 0.1);
+}
+
+#pulseaudio {
+    color: #e0def4;
+}
+#pulseaudio:hover {
+    background-color: rgba(224, 222, 244, 0.1);
+}
+
+#network {
+    color: #9ccfd8;
+}
+#network:hover {
+    background-color: rgba(156, 207, 216, 0.1);
+}
+#network.disconnected {
+    color: #eb1c52;
+    background-color: rgba(235, 28, 82, 0.15);
+}
+
+/* Base style for right-side network explicitly maps to avoid pollution from left-side network#speed */
+#network:not(.speed) {
+    color: #9ccfd8;
+}
+
+#bluetooth {
+    color: #3e8fb0;
+}
+#bluetooth:hover {
+    background-color: rgba(62, 143, 176, 0.1);
+}
+
+#battery {
+    color: #9ccfd8;
+}
+#battery.charging {
+    color: #f6c177;
+}
+#battery.warning {
+    color: #f6c177;
+    background-color: rgba(246, 193, 119, 0.1);
+}
+#battery.critical {
+    color: #eb1c52;
+    background-color: rgba(235, 28, 82, 0.2);
+    animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+    to {
+        background-color: rgba(235, 28, 82, 0.05);
+        color: rgba(235, 28, 82, 0.6);
+    }
+}
+
+/* --- GLOBAL TOOLTIP OVERRIDES --- */
+tooltip {
+    background-color: rgba(10, 10, 26, 0.95);
+    border: 1px solid rgba(196, 167, 231, 0.2); /* Soft violet accent border */
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+tooltip label {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    color: #e0def4;
+    font-size: 13px;
+    padding: 4px;
+}
+
+#custom-updates {
+    color: #9ccfd8;
+    background-color: rgba(255, 255, 255, 0.03);
+    margin: 3px 4px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+#custom-updates:hover {
+    background-color: rgba(156, 207, 216, 0.15);
+}
+
+
+
+#custom-power {
+    background-color: rgba(235, 28, 82, 0.2);
+    color: #eb1c52;
+    padding: 0 14px;
+    border-radius: 0 12px 12px 0;
+}
+#custom-power:hover {
+    background-color: rgba(235, 28, 82, 0.5);
+    color: #ffffff;
+}
+
+tooltip window box locallabel {
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-weight: bold;
+    padding: 2px;
+}
+
+#clock {
+    color: #ffffff;
+    padding: 0 16px;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.03);
+    margin: 3px 2px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+#clock:hover {
+    background-color: rgba(196, 167, 231, 0.15);
+    color: #c4a7e7;
+}
+
+/* Smooth out module transition states across the board */
+#custom-gpu, #custom-ollama, #custom-docker, #cpu, #memory, #custom-storage, #pulseaudio, #network, #bluetooth, #battery {
+    margin: 3px 1px;
+    border-radius: 6px;
+}
