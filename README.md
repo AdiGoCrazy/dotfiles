@@ -24,7 +24,7 @@ A modern, high-performance, and visually refined **Hyprland + Waybar** rice for 
 Clone this repository and run the automated installer:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/dotfiles.git ~/dotfiles
+git clone https://github.com/AdiGoCrazy/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 chmod +x install.sh
 ./install.sh
