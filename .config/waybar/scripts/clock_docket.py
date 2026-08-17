@@ -12,7 +12,7 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gtk, Gdk, GLib
 import cairo
 
-ALL_LOCKS = ["/tmp/bt_docket.lock", "/tmp/wifi_docket.lock", "/tmp/audio_docket.lock", "/tmp/clock_docket.lock"]
+ALL_LOCKS = ["/tmp/bt_docket.lock", "/tmp/wifi_docket.lock", "/tmp/audio_docket.lock", "/tmp/clock_docket.lock", "/tmp/power_docket.lock"]
 CURRENT_LOCK = "/tmp/clock_docket.lock"
 
 # Close any other open dockets for mutual exclusion
