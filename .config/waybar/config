@@ -35,7 +35,8 @@
     "format-wifi": " {bandwidthDownBytes}   {bandwidthUpBytes}",
     "format-ethernet": " {bandwidthDownBytes}   {bandwidthUpBytes}",
     "format-disconnected": "󰖪  No Net",
-    "tooltip-format": "󰈀 Interface: {ifname}\n󰩟 Local IP: {ipaddr}"
+    "tooltip-format": "󰈀 Interface: {ifname}\n󰩟 Local IP: {ipaddr}",
+    "on-click": "python3 /home/adi/.config/waybar/scripts/wifi_docket.py"
   },
 
   "custom/gpu": {
@@ -122,7 +123,6 @@
     "format-ethernet": "󰈀 Wired",
     "tooltip-format-wifi": "󰩟 IP: {ipaddr}\n󨺛 Down: {bandwidthDownBits} | Up: {bandwidthUpBits}\n󰓅 Interface: {ifname}",
     "tooltip-format-ethernet": "󰈀 Interface: {ifname}\n󰩟 IP: {ipaddr}",
-    // "on-click": "kitty -e nmtui"
     "on-click": "python3 /home/adi/.config/waybar/scripts/wifi_docket.py"
   },
 
