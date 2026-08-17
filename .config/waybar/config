@@ -160,26 +160,10 @@
   },
 
   "clock": {
-    "format": "  {:%I:%M %p | %d/%m}",
+    "format": "  {:%I:%M %p  |  󰃭 %a, %d %b}",
     "interval": 1,
-    "tooltip-format": "<big><span color='#c4a7e7'><b>{:%B %Y}</b></span></big>\n<tt><small>{calendar}</small></tt>",
-    "calendar": {
-      "mode": "month",
-      "weeks-pos": "right",
-      "on-scroll": 1,
-      "format": {
-        "months": "<span color='#ffead3'><b>{}</b></span>",
-        "days": "<span color='#eccdb8'><b>{}</b></span>",
-        "weeks": "<span color='#9ccfd8'><b>W{}</b></span>",
-        "weekdays": "<span color='#f6c177'><b>{}</b></span>",
-        "today": "<span color='#eb1c52'><b><u>{}</u></b></span>"
-      }
-    },
-    "actions": {
-      "on-click-right": "mode",
-      "on-scroll-up": "shift_up",
-      "on-scroll-down": "shift_down"
-    }
+    "tooltip-format": "󰃭 {:%A, %B %d, %Y}",
+    "on-click": "python3 /home/adi/.config/waybar/scripts/clock_docket.py"
   },
 
   "custom/power": {
