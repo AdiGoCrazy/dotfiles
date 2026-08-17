@@ -250,13 +250,6 @@ class ClockDocket(Gtk.Window):
             color: #ffffff;
             border-radius: 8px;
         }
-        calendar#custom-calendar label,
-        calendar#custom-calendar .highlight,
-        calendar#custom-calendar .day-number,
-        calendar#custom-calendar .day-name {
-            text-align: center;
-            color: #e0def4;
-        }
         calendar#custom-calendar header,
         calendar#custom-calendar .header {
             color: #9ccfd8;
