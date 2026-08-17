@@ -48,7 +48,7 @@ def cleanup():
 class AnalogClock(Gtk.DrawingArea):
     def __init__(self):
         super().__init__()
-        self.set_size_request(160, 160)
+        self.set_size_request(170, 170)
         self.connect("draw", self.on_draw)
 
     def on_draw(self, widget, cr):
@@ -128,7 +128,7 @@ class ClockDocket(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.set_decorated(False)
         self.set_resizable(False)
-        self.set_default_size(500, 400)
+        self.set_default_size(520, 420)
 
         screen = self.get_screen()
         visual = screen.get_rgba_visual()
@@ -239,43 +239,56 @@ class ClockDocket(Gtk.Window):
         }
         calendar#custom-calendar {
             background-color: rgba(255, 255, 255, 0.03);
-            border-radius: 14px;
+            border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             color: #e0def4;
-            padding: 8px;
-            font-size: 13px;
+            padding: 10px;
+            font-size: 14px;
         }
         calendar#custom-calendar:selected {
-            background-color: rgba(196, 167, 231, 0.35);
+            background-color: rgba(196, 167, 231, 0.4);
             color: #ffffff;
             border-radius: 8px;
         }
+        calendar#custom-calendar label,
+        calendar#custom-calendar .highlight,
+        calendar#custom-calendar .day-number,
+        calendar#custom-calendar .day-name {
+            text-align: center;
+            color: #e0def4;
+        }
         calendar#custom-calendar header,
-        calendar#custom-calendar .header,
-        calendar#custom-calendar label {
+        calendar#custom-calendar .header {
             color: #9ccfd8;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            padding-bottom: 6px;
+        }
+        calendar#custom-calendar header label,
+        calendar#custom-calendar .header label {
+            color: #9ccfd8;
+            font-size: 18px;
             font-weight: bold;
         }
         calendar#custom-calendar button,
         calendar#custom-calendar header button,
         calendar#custom-calendar .header button {
-            min-width: 36px;
-            min-height: 36px;
-            font-size: 18px;
+            min-width: 44px;
+            min-height: 44px;
+            font-size: 22px;
             font-weight: bold;
             color: #c4a7e7;
-            background: rgba(196, 167, 231, 0.2);
-            border-radius: 10px;
-            border: 1px solid rgba(196, 167, 231, 0.4);
-            margin: 4px;
-            padding: 6px 12px;
+            background: rgba(196, 167, 231, 0.25);
+            border-radius: 12px;
+            border: 1px solid rgba(196, 167, 231, 0.5);
+            margin: 4px 6px;
+            padding: 6px 14px;
         }
         calendar#custom-calendar button:hover,
         calendar#custom-calendar header button:hover {
-            background: rgba(196, 167, 231, 0.5);
+            background: rgba(196, 167, 231, 0.55);
             color: #ffffff;
-            border-color: rgba(196, 167, 231, 0.8);
+            border-color: rgba(196, 167, 231, 0.9);
         }
         """
         provider = Gtk.CssProvider()
