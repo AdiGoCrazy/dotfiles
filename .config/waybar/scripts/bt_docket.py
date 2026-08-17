@@ -13,12 +13,11 @@ from gi.repository import Gtk, Gdk, GLib, Gio
 
 LOCKFILE = "/tmp/bt_docket.lock"
 
-# Single-instance toggle behavior
 if os.path.exists(LOCKFILE):
     try:
         with open(LOCKFILE, 'r') as f:
             pid = int(f.read().strip())
-        os.kill(pid, 15)  # Send SIGTERM to close existing window
+        os.kill(pid, 15)
         sys.exit(0)
     except Exception:
         pass
@@ -36,25 +35,39 @@ class BluetoothDocket(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.set_decorated(False)
         self.set_resizable(False)
-        self.set_default_size(320, 400)
+        self.set_default_size(340, 420)
 
-        # Apply CSS styling
+        # Enable true RGBA transparency for anti-aliased rounded corners
+        screen = self.get_screen()
+        visual = screen.get_rgba_visual()
+        if visual and screen.is_composited():
+            self.set_visual(visual)
+        self.set_app_paintable(True)
+
         self.apply_css()
 
-        # Root Container
+        # Root Card Container
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         main_box.set_name("docket-root")
-        main_box.set_margin_top(12)
-        main_box.set_margin_bottom(12)
-        main_box.set_margin_start(12)
-        main_box.set_margin_end(12)
+        main_box.set_margin_top(4)
+        main_box.set_margin_bottom(4)
+        main_box.set_margin_start(4)
+        main_box.set_margin_end(4)
         self.add(main_box)
+
+        # Inner Content Padding Box
+        content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+        content_box.set_margin_top(14)
+        content_box.set_margin_bottom(14)
+        content_box.set_margin_start(14)
+        content_box.set_margin_end(14)
+        main_box.pack_start(content_box, True, True, 0)
 
         # --- Header Region ---
         header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         
         title_label = Gtk.Label()
-        title_label.set_markup("<span font='14' weight='bold' foreground='#3e8fb0'>󰂯 Bluetooth</span>")
+        title_label.set_markup("<span font='13' weight='bold' foreground='#3e8fb0'>󰂯 Bluetooth</span>")
         title_label.set_halign(Gtk.Align.START)
         header_box.pack_start(title_label, True, True, 0)
 
@@ -68,26 +81,26 @@ class BluetoothDocket(Gtk.Window):
         self.scan_btn = Gtk.Button(label="󰑐 Scan")
         self.scan_btn.set_name("btn-action")
         self.scan_btn.connect("clicked", self.on_scan_clicked)
-        header_box.pack_end(self.scan_btn, False, False, 4)
+        header_box.pack_end(self.scan_btn, False, False, 6)
 
-        main_box.pack_start(header_box, False, False, 0)
+        content_box.pack_start(header_box, False, False, 0)
 
         # Separator
         sep = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        main_box.pack_start(sep, False, False, 2)
+        content_box.pack_start(sep, False, False, 2)
 
         # --- Device List Scroll Region ---
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         scroll.set_min_content_height(280)
 
-        self.device_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.device_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         scroll.add(self.device_box)
-        main_box.pack_start(scroll, True, True, 0)
+        content_box.pack_start(scroll, True, True, 0)
 
         # --- Footer Region ---
         sep2 = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
-        main_box.pack_start(sep2, False, False, 2)
+        content_box.pack_start(sep2, False, False, 2)
 
         footer_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         settings_btn = Gtk.Button(label="⚙ Full Settings (Blueman)")
@@ -95,7 +108,7 @@ class BluetoothDocket(Gtk.Window):
         settings_btn.connect("clicked", self.on_settings_clicked)
         footer_box.pack_start(settings_btn, True, True, 0)
 
-        main_box.pack_start(footer_box, False, False, 0)
+        content_box.pack_start(footer_box, False, False, 0)
 
         # Auto-close when mouse leaves window
         self.connect("leave-notify-event", self.on_mouse_leave)
@@ -106,44 +119,54 @@ class BluetoothDocket(Gtk.Window):
 
     def apply_css(self):
         css = b"""
+        window {
+            background-color: transparent;
+        }
         #docket-root {
-            background-color: rgba(10, 10, 26, 0.92);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 14px;
+            background-color: rgba(10, 10, 26, 0.90);
+            border: 1px solid rgba(196, 167, 231, 0.25);
+            border-radius: 16px;
             color: #e0def4;
             font-family: 'JetBrainsMono Nerd Font', sans-serif;
         }
         button#btn-action {
-            background: rgba(62, 143, 176, 0.2);
+            background: rgba(62, 143, 176, 0.25);
             color: #9ccfd8;
-            border-radius: 8px;
-            padding: 4px 10px;
+            border-radius: 10px;
+            padding: 5px 12px;
             font-size: 12px;
-            border: none;
+            border: 1px solid rgba(156, 207, 216, 0.2);
+            transition: all 0.2s ease;
         }
         button#btn-action:hover {
-            background: rgba(62, 143, 176, 0.4);
+            background: rgba(62, 143, 176, 0.5);
             color: #ffffff;
+            border-color: rgba(156, 207, 216, 0.5);
         }
         button#btn-settings {
             background: rgba(255, 255, 255, 0.06);
             color: #c4a7e7;
-            border-radius: 8px;
-            padding: 6px 12px;
+            border-radius: 10px;
+            padding: 7px 14px;
             font-size: 12px;
-            border: none;
+            border: 1px solid rgba(196, 167, 231, 0.2);
+            transition: all 0.2s ease;
         }
         button#btn-settings:hover {
-            background: rgba(196, 167, 231, 0.2);
+            background: rgba(196, 167, 231, 0.25);
             color: #ffffff;
+            border-color: rgba(196, 167, 231, 0.5);
         }
         .device-card {
             background: rgba(255, 255, 255, 0.04);
-            border-radius: 10px;
-            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 10px 12px;
+            transition: all 0.2s ease;
         }
         .device-card:hover {
             background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(156, 207, 216, 0.25);
         }
         """
         provider = Gtk.CssProvider()
