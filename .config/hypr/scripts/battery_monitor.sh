@@ -1,15 +1,23 @@
 #!/usr/bin/env bash
 
 # ==============================================================================
-# BATTERY MONITORING DAEMON WITH AUDIO & VISUAL NOTIFICATIONS
-# - Audio tunes on Charger Connected / Disconnected
+# BATTERY MONITORING DAEMON WITH INSTANT AUDIO & VISUAL NOTIFICATIONS
+# - AC online detection (/sys/class/power_supply/AC*/online) for instant plug/unplug tunes
 # - Audio tunes + notifications for 30%, 15%, and 5% battery thresholds
+# - Single instance enforcement via lockfile
 # ==============================================================================
+
+LOCKFILE="/tmp/battery_monitor.lock"
+if [ -e "$LOCKFILE" ] && kill -0 "$(cat "$LOCKFILE")" 2>/dev/null; then
+    exit 0
+fi
+echo "$$" > "$LOCKFILE"
+trap 'rm -f "$LOCKFILE"; exit' EXIT INT TERM
 
 warn_30=false
 warn_15=false
 warn_5=false
-prev_status=""
+prev_ac=""
 
 play_sound() {
     local sound_file="$1"
@@ -23,19 +31,27 @@ play_sound() {
 }
 
 while true; do
+    # Locate AC Power Supply (e.g. ACAD, AC, ADP1)
+    AC=$(find /sys/class/power_supply/ -maxdepth 1 \( -name "AC*" -o -name "ADP*" -o -name "MAINS*" \) | head -n 1)
+    # Locate System Battery (e.g. BAT1, BAT0)
     BAT=$(find /sys/class/power_supply/ -maxdepth 1 -name "BAT*" | head -n 1)
 
-    if [ -n "$BAT" ] && [ -f "$BAT/capacity" ] && [ -f "$BAT/status" ]; then
-        capacity=$(cat "$BAT/capacity")
-        status=$(cat "$BAT/status")
+    ac_online=1
+    if [ -n "$AC" ] && [ -f "$AC/online" ]; then
+        ac_online=$(cat "$AC/online")
+    fi
 
-        # Initialize prev_status on startup
-        if [ -z "$prev_status" ]; then
-            prev_status="$status"
+    if [ -n "$BAT" ] && [ -f "$BAT/capacity" ]; then
+        capacity=$(cat "$BAT/capacity")
+        bat_status=$(cat "$BAT/status" 2>/dev/null || echo "Unknown")
+
+        # Initialize prev_ac state on first loop iteration
+        if [ -z "$prev_ac" ]; then
+            prev_ac="$ac_online"
         fi
 
-        # Detect Charger Plugging In
-        if [ "$status" != "Discharging" ] && [ "$prev_status" = "Discharging" ]; then
+        # Detect Charger Plugged In (AC online state changed 0 -> 1)
+        if [ "$ac_online" -eq 1 ] && [ "$prev_ac" -eq 0 ]; then
             dunstify -u normal -r 9991 -i battery-charging "🔌 Charger Connected" "Battery is now charging (${capacity}%)."
             play_sound "/usr/share/sounds/ocean/stereo/power-plug.oga" "power-plug"
             warn_30=false
@@ -43,16 +59,16 @@ while true; do
             warn_5=false
         fi
 
-        # Detect Charger Unplugging
-        if [ "$status" = "Discharging" ] && [ "$prev_status" != "Discharging" ]; then
+        # Detect Charger Unplugged (AC online state changed 1 -> 0)
+        if [ "$ac_online" -eq 0 ] && [ "$prev_ac" -eq 1 ]; then
             dunstify -u normal -r 9991 -i battery "🔋 Charger Unplugged" "Running on battery power (${capacity}%)."
             play_sound "/usr/share/sounds/ocean/stereo/power-unplug.oga" "power-unplug"
         fi
 
-        prev_status="$status"
+        prev_ac="$ac_online"
 
-        # Check Discharging Thresholds
-        if [ "$status" = "Discharging" ]; then
+        # Low Battery Thresholds (when unplugged or discharging)
+        if [ "$ac_online" -eq 0 ] || [ "$bat_status" = "Discharging" ]; then
             if [ "$capacity" -le 5 ] && [ "$warn_5" = false ]; then
                 dunstify -u critical -r 9991 -i battery-empty "⚠️ Battery Critical!" "Battery is at ${capacity}%. Plug in charger immediately!"
                 play_sound "/usr/share/sounds/ocean/stereo/dialog-error-serious.oga" "dialog-error"
@@ -75,11 +91,11 @@ while true; do
             warn_5=false
         fi
 
-        # Reset specific markers if battery level rises back above thresholds
+        # Reset threshold flags if capacity rises back above markers
         if [ "$capacity" -gt 30 ]; then warn_30=false; fi
         if [ "$capacity" -gt 15 ]; then warn_15=false; fi
         if [ "$capacity" -gt 5 ];  then warn_5=false;  fi
     fi
 
-    sleep 10  # Check battery state every 10 seconds for responsive audio
+    sleep 2  # Fast 2-second polling interval for instant plug/unplug feedback
 done
