@@ -123,7 +123,7 @@
     "tooltip-format-wifi": "󰩟 IP: {ipaddr}\n󨺛 Down: {bandwidthDownBits} | Up: {bandwidthUpBits}\n󰓅 Interface: {ifname}",
     "tooltip-format-ethernet": "󰈀 Interface: {ifname}\n󰩟 IP: {ipaddr}",
     // "on-click": "kitty -e nmtui"
-    "on-click": "iwgtk"
+    "on-click": "python3 /home/adi/.config/waybar/scripts/wifi_docket.py"
   },
 
   "bluetooth": {
