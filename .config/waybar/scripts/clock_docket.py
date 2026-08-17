@@ -66,9 +66,9 @@ class AnalogClock(Gtk.DrawingArea):
 
         # Background Glass Circle
         cr.arc(center_x, center_y, radius, 0, 2 * math.pi)
-        cr.set_source_rgba(0.08, 0.08, 0.18, 0.75)
+        cr.set_source_rgba(0.08, 0.08, 0.18, 0.85)
         cr.fill_preserve()
-        cr.set_source_rgba(0.77, 0.65, 0.91, 0.4)  # Violet border
+        cr.set_source_rgba(0.77, 0.65, 0.91, 0.5)  # Violet border
         cr.set_line_width(2.0)
         cr.stroke()
 
@@ -82,7 +82,7 @@ class AnalogClock(Gtk.DrawingArea):
 
             cr.move_to(x1, y1)
             cr.line_to(x2, y2)
-            cr.set_source_rgba(0.88, 0.87, 0.96, 0.8)
+            cr.set_source_rgba(0.88, 0.87, 0.96, 0.85)
             cr.set_line_width(3.0 if i % 3 == 0 else 1.5)
             cr.stroke()
 
@@ -92,8 +92,8 @@ class AnalogClock(Gtk.DrawingArea):
         cr.line_to(center_x + (radius * 0.48) * math.sin(hour_angle),
                    center_y - (radius * 0.48) * math.cos(hour_angle))
         cr.set_source_rgba(0.77, 0.65, 0.91, 1.0)
-        cr.set_line_width(5.0)
-        cr.set_line_cap(cairo.ROUND_ROUND)
+        cr.set_line_width(5.5)
+        cr.set_line_cap(cairo.LINE_CAP_ROUND)
         cr.stroke()
 
         # Minute Hand (#9ccfd8 - Twilight Cyan)
@@ -102,8 +102,8 @@ class AnalogClock(Gtk.DrawingArea):
         cr.line_to(center_x + (radius * 0.70) * math.sin(min_angle),
                    center_y - (radius * 0.70) * math.cos(min_angle))
         cr.set_source_rgba(0.61, 0.81, 0.85, 1.0)
-        cr.set_line_width(3.5)
-        cr.set_line_cap(cairo.ROUND_ROUND)
+        cr.set_line_width(4.0)
+        cr.set_line_cap(cairo.LINE_CAP_ROUND)
         cr.stroke()
 
         # Second Hand (#f6c177 - Warm Coral)
@@ -116,7 +116,7 @@ class AnalogClock(Gtk.DrawingArea):
         cr.stroke()
 
         # Center Pin
-        cr.arc(center_x, center_y, 4.5, 0, 2 * math.pi)
+        cr.arc(center_x, center_y, 5.0, 0, 2 * math.pi)
         cr.set_source_rgba(0.96, 0.76, 0.47, 1.0)
         cr.fill()
 
@@ -128,7 +128,7 @@ class ClockDocket(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.set_decorated(False)
         self.set_resizable(False)
-        self.set_default_size(480, 380)
+        self.set_default_size(500, 400)
 
         screen = self.get_screen()
         visual = screen.get_rgba_visual()
@@ -242,7 +242,7 @@ class ClockDocket(Gtk.Window):
             border-radius: 14px;
             border: 1px solid rgba(255, 255, 255, 0.06);
             color: #e0def4;
-            padding: 6px;
+            padding: 8px;
             font-size: 13px;
         }
         calendar#custom-calendar:selected {
@@ -251,30 +251,31 @@ class ClockDocket(Gtk.Window):
             border-radius: 8px;
         }
         calendar#custom-calendar header,
-        calendar#custom-calendar .header {
+        calendar#custom-calendar .header,
+        calendar#custom-calendar label {
             color: #9ccfd8;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: bold;
         }
         calendar#custom-calendar button,
         calendar#custom-calendar header button,
         calendar#custom-calendar .header button {
-            min-width: 32px;
-            min-height: 32px;
-            font-size: 16px;
+            min-width: 36px;
+            min-height: 36px;
+            font-size: 18px;
             font-weight: bold;
             color: #c4a7e7;
-            background: rgba(196, 167, 231, 0.15);
-            border-radius: 8px;
-            border: 1px solid rgba(196, 167, 231, 0.3);
-            margin: 2px 4px;
-            padding: 4px 8px;
+            background: rgba(196, 167, 231, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(196, 167, 231, 0.4);
+            margin: 4px;
+            padding: 6px 12px;
         }
         calendar#custom-calendar button:hover,
         calendar#custom-calendar header button:hover {
-            background: rgba(196, 167, 231, 0.35);
+            background: rgba(196, 167, 231, 0.5);
             color: #ffffff;
-            border-color: rgba(196, 167, 231, 0.6);
+            border-color: rgba(196, 167, 231, 0.8);
         }
         """
         provider = Gtk.CssProvider()
