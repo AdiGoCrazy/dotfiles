@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
 # ==============================================================================
-# HYPRLOCK WRAPPER WITH INSTANT LOCK SOUND
+# HYPRLOCK WRAPPER WITH INSTANT LOCK & UNLOCK SOUNDS
 # ==============================================================================
 
-# Play lock click sound instantly on trigger
+# Play lock click sound instantly
 paplay /usr/share/sounds/ocean/stereo/button-pressed.oga &
 
-# Launch Hyprlock (Instant unlock sound is handled directly inside hyprlock.conf on_unlock_cmd)
-uwsm app -- hyprlock
+# Launch Hyprlock directly (returns immediately when user authenticates)
+hyprlock
+
+# Play unlock chime sound instantly as Hyprlock exits
+paplay /usr/share/sounds/ocean/stereo/service-login.oga &
