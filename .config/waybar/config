@@ -113,7 +113,7 @@
       "default": [" ", " "]
     },
     "scroll-step": 2,
-    "on-click": "pavucontrol",
+    "on-click": "python3 /home/adi/.config/waybar/scripts/audio_docket.py",
     "on-click-right": "amixer set Master toggle"
   },
 
