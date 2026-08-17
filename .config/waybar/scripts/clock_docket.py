@@ -48,13 +48,13 @@ def cleanup():
 class AnalogClock(Gtk.DrawingArea):
     def __init__(self):
         super().__init__()
-        self.set_size_request(140, 140)
+        self.set_size_request(160, 160)
         self.connect("draw", self.on_draw)
 
     def on_draw(self, widget, cr):
         width = widget.get_allocated_width()
         height = widget.get_allocated_height()
-        radius = min(width, height) / 2.0 - 8
+        radius = min(width, height) / 2.0 - 10
 
         center_x = width / 2.0
         center_y = height / 2.0
@@ -66,43 +66,43 @@ class AnalogClock(Gtk.DrawingArea):
 
         # Background Glass Circle
         cr.arc(center_x, center_y, radius, 0, 2 * math.pi)
-        cr.set_source_rgba(0.1, 0.1, 0.2, 0.4)
+        cr.set_source_rgba(0.08, 0.08, 0.18, 0.75)
         cr.fill_preserve()
-        cr.set_source_rgba(0.77, 0.65, 0.91, 0.3)  # Violet border
-        cr.set_line_width(1.5)
+        cr.set_source_rgba(0.77, 0.65, 0.91, 0.4)  # Violet border
+        cr.set_line_width(2.0)
         cr.stroke()
 
         # Minimalist Hour Tick Marks
         for i in range(12):
             angle = i * (math.pi / 6.0)
-            x1 = center_x + (radius - 10) * math.sin(angle)
-            y1 = center_y - (radius - 10) * math.cos(angle)
+            x1 = center_x + (radius - 12) * math.sin(angle)
+            y1 = center_y - (radius - 12) * math.cos(angle)
             x2 = center_x + (radius - 4) * math.sin(angle)
             y2 = center_y - (radius - 4) * math.cos(angle)
 
             cr.move_to(x1, y1)
             cr.line_to(x2, y2)
-            cr.set_source_rgba(0.88, 0.87, 0.96, 0.6)
-            cr.set_line_width(2.0 if i % 3 == 0 else 1.0)
+            cr.set_source_rgba(0.88, 0.87, 0.96, 0.8)
+            cr.set_line_width(3.0 if i % 3 == 0 else 1.5)
             cr.stroke()
 
         # Hour Hand (#c4a7e7 - Pastel Violet)
         hour_angle = (hours + minutes / 60.0) * (math.pi / 6.0)
         cr.move_to(center_x, center_y)
-        cr.line_to(center_x + (radius * 0.5) * math.sin(hour_angle),
-                   center_y - (radius * 0.5) * math.cos(hour_angle))
-        cr.set_source_rgba(0.77, 0.65, 0.91, 0.95)
-        cr.set_line_width(3.5)
+        cr.line_to(center_x + (radius * 0.48) * math.sin(hour_angle),
+                   center_y - (radius * 0.48) * math.cos(hour_angle))
+        cr.set_source_rgba(0.77, 0.65, 0.91, 1.0)
+        cr.set_line_width(5.0)
         cr.set_line_cap(cairo.ROUND_ROUND)
         cr.stroke()
 
         # Minute Hand (#9ccfd8 - Twilight Cyan)
         min_angle = (minutes + seconds / 60.0) * (math.pi / 30.0)
         cr.move_to(center_x, center_y)
-        cr.line_to(center_x + (radius * 0.72) * math.sin(min_angle),
-                   center_y - (radius * 0.72) * math.cos(min_angle))
-        cr.set_source_rgba(0.61, 0.81, 0.85, 0.95)
-        cr.set_line_width(2.5)
+        cr.line_to(center_x + (radius * 0.70) * math.sin(min_angle),
+                   center_y - (radius * 0.70) * math.cos(min_angle))
+        cr.set_source_rgba(0.61, 0.81, 0.85, 1.0)
+        cr.set_line_width(3.5)
         cr.set_line_cap(cairo.ROUND_ROUND)
         cr.stroke()
 
@@ -111,16 +111,16 @@ class AnalogClock(Gtk.DrawingArea):
         cr.move_to(center_x, center_y)
         cr.line_to(center_x + (radius * 0.82) * math.sin(sec_angle),
                    center_y - (radius * 0.82) * math.cos(sec_angle))
-        cr.set_source_rgba(0.96, 0.76, 0.47, 0.9)
-        cr.set_line_width(1.5)
+        cr.set_source_rgba(0.96, 0.76, 0.47, 1.0)
+        cr.set_line_width(2.0)
         cr.stroke()
 
         # Center Pin
-        cr.arc(center_x, center_y, 3.5, 0, 2 * math.pi)
+        cr.arc(center_x, center_y, 4.5, 0, 2 * math.pi)
         cr.set_source_rgba(0.96, 0.76, 0.47, 1.0)
         cr.fill()
 
-        return False
+        return True
 
 class ClockDocket(Gtk.Window):
     def __init__(self):
@@ -128,7 +128,7 @@ class ClockDocket(Gtk.Window):
         self.set_type_hint(Gdk.WindowTypeHint.UTILITY)
         self.set_decorated(False)
         self.set_resizable(False)
-        self.set_default_size(440, 360)
+        self.set_default_size(480, 380)
 
         screen = self.get_screen()
         visual = screen.get_rgba_visual()
@@ -173,7 +173,7 @@ class ClockDocket(Gtk.Window):
         content_box.pack_start(sep, False, False, 2)
 
         # --- Middle Region: Analog Clock (Left) + Calendar (Right) ---
-        mid_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
+        mid_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=16)
 
         # Analog Clock Left Box
         clock_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
@@ -226,8 +226,9 @@ class ClockDocket(Gtk.Window):
             background: rgba(255, 255, 255, 0.06);
             color: #c4a7e7;
             border-radius: 10px;
-            padding: 7px 14px;
-            font-size: 12px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: bold;
             border: 1px solid rgba(196, 167, 231, 0.2);
             transition: all 0.2s ease;
         }
@@ -238,19 +239,42 @@ class ClockDocket(Gtk.Window):
         }
         calendar#custom-calendar {
             background-color: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
             color: #e0def4;
-            padding: 4px;
+            padding: 6px;
+            font-size: 13px;
         }
         calendar#custom-calendar:selected {
-            background-color: rgba(196, 167, 231, 0.3);
+            background-color: rgba(196, 167, 231, 0.35);
             color: #ffffff;
-            border-radius: 6px;
+            border-radius: 8px;
         }
-        calendar#custom-calendar.header {
+        calendar#custom-calendar header,
+        calendar#custom-calendar .header {
             color: #9ccfd8;
+            font-size: 15px;
             font-weight: bold;
+        }
+        calendar#custom-calendar button,
+        calendar#custom-calendar header button,
+        calendar#custom-calendar .header button {
+            min-width: 32px;
+            min-height: 32px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #c4a7e7;
+            background: rgba(196, 167, 231, 0.15);
+            border-radius: 8px;
+            border: 1px solid rgba(196, 167, 231, 0.3);
+            margin: 2px 4px;
+            padding: 4px 8px;
+        }
+        calendar#custom-calendar button:hover,
+        calendar#custom-calendar header button:hover {
+            background: rgba(196, 167, 231, 0.35);
+            color: #ffffff;
+            border-color: rgba(196, 167, 231, 0.6);
         }
         """
         provider = Gtk.CssProvider()
