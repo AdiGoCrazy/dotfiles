@@ -10,24 +10,38 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gtk, Gdk, GLib, Gio
 
-LOCKFILE = "/tmp/audio_docket.lock"
+ALL_LOCKS = ["/tmp/bt_docket.lock", "/tmp/wifi_docket.lock", "/tmp/audio_docket.lock"]
+CURRENT_LOCK = "/tmp/audio_docket.lock"
 
-# Single-instance toggle behavior
-if os.path.exists(LOCKFILE):
+# Close any other open dockets for mutual exclusion
+for lock in ALL_LOCKS:
+    if lock != CURRENT_LOCK and os.path.exists(lock):
+        try:
+            with open(lock, 'r') as f:
+                pid = int(f.read().strip())
+            os.kill(pid, 15)
+        except Exception:
+            pass
+
+# Single-instance toggle behavior for Audio Docket
+if os.path.exists(CURRENT_LOCK):
     try:
-        with open(LOCKFILE, 'r') as f:
+        with open(CURRENT_LOCK, 'r') as f:
             pid = int(f.read().strip())
-        os.kill(pid, 15)  # Send SIGTERM to close existing window
+        os.kill(pid, 15)
         sys.exit(0)
     except Exception:
         pass
 
-with open(LOCKFILE, 'w') as f:
+with open(CURRENT_LOCK, 'w') as f:
     f.write(str(os.getpid()))
 
 def cleanup():
-    if os.path.exists(LOCKFILE):
-        os.remove(LOCKFILE)
+    if os.path.exists(CURRENT_LOCK):
+        try:
+            os.remove(CURRENT_LOCK)
+        except Exception:
+            pass
 
 class AudioDocket(Gtk.Window):
     def __init__(self):
@@ -37,7 +51,6 @@ class AudioDocket(Gtk.Window):
         self.set_resizable(False)
         self.set_default_size(360, 460)
 
-        # Enable RGBA visual transparency for rounded corners
         screen = self.get_screen()
         visual = screen.get_rgba_visual()
         if visual and screen.is_composited():
@@ -46,7 +59,6 @@ class AudioDocket(Gtk.Window):
 
         self.apply_css()
 
-        # Root Card Container
         main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         main_box.set_name("docket-root")
         main_box.set_margin_top(4)
@@ -55,7 +67,6 @@ class AudioDocket(Gtk.Window):
         main_box.set_margin_end(4)
         self.add(main_box)
 
-        # Inner Content Box
         content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         content_box.set_margin_top(14)
         content_box.set_margin_bottom(14)
@@ -63,7 +74,6 @@ class AudioDocket(Gtk.Window):
         content_box.set_margin_end(14)
         main_box.pack_start(content_box, True, True, 0)
 
-        # --- Header Region ---
         header_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         
         title_label = Gtk.Label()
@@ -71,7 +81,6 @@ class AudioDocket(Gtk.Window):
         title_label.set_halign(Gtk.Align.START)
         header_box.pack_start(title_label, True, True, 0)
 
-        # Mute Toggle Button
         self.mute_btn = Gtk.Button(label="󰕾 Mute")
         self.mute_btn.set_name("btn-action")
         self.mute_btn.connect("clicked", self.on_mute_clicked)
@@ -79,7 +88,6 @@ class AudioDocket(Gtk.Window):
 
         content_box.pack_start(header_box, False, False, 0)
 
-        # Master Volume Slider
         vol_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         vol_icon = Gtk.Label()
         vol_icon.set_markup("<span font='14' color='#c4a7e7'>󰓃</span>")
@@ -96,17 +104,14 @@ class AudioDocket(Gtk.Window):
 
         content_box.pack_start(vol_box, False, False, 0)
 
-        # Separator
         sep = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
         content_box.pack_start(sep, False, False, 2)
 
-        # Section Label: Output Devices
         out_lbl = Gtk.Label()
         out_lbl.set_markup("<span font='10' weight='bold' foreground='#9ccfd8'>PLAYBACK OUTPUT DEVICES</span>")
         out_lbl.set_halign(Gtk.Align.START)
         content_box.pack_start(out_lbl, False, False, 0)
 
-        # --- Device List Scroll Region ---
         scroll = Gtk.ScrolledWindow()
         scroll.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
         scroll.set_min_content_height(240)
@@ -115,7 +120,6 @@ class AudioDocket(Gtk.Window):
         scroll.add(self.sinks_box)
         content_box.pack_start(scroll, True, True, 0)
 
-        # --- Footer Region ---
         sep2 = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
         content_box.pack_start(sep2, False, False, 2)
 
@@ -127,11 +131,9 @@ class AudioDocket(Gtk.Window):
 
         content_box.pack_start(footer_box, False, False, 0)
 
-        # Auto-close on mouse exit
         self.connect("leave-notify-event", self.on_mouse_leave)
         self.connect("destroy", lambda w: cleanup())
 
-        # Initial Population
         self.refresh_sinks()
 
     def apply_css(self):
