@@ -24,6 +24,7 @@
     "network",
     "bluetooth",
     "battery",
+    "custom/recorder",
     "custom/updates",
     "clock",
     "custom/power"
@@ -164,6 +165,15 @@
     "interval": 1,
     "tooltip-format": "󰃭 {:%A, %B %d, %Y}",
     "on-click": "python3 /home/adi/.config/waybar/scripts/clock_docket.py"
+  },
+
+  "custom/recorder": {
+    "format": "{}",
+    "return-type": "json",
+    "interval": 1,
+    "exec": "/home/adi/.config/hypr/scripts/screen_record.sh --status",
+    "on-click": "/home/adi/.config/hypr/scripts/screen_record.sh --toggle",
+    "on-click-right": "/home/adi/.config/hypr/scripts/screen_record.sh --region"
   },
 
   "custom/power": {
