@@ -213,30 +213,8 @@ tooltip window box locallabel {
     color: #c4a7e7;
 }
 
-#custom-recorder {
-    color: #e0def4;
-    padding: 0 12px;
-    font-weight: 600;
-    background-color: rgba(255, 255, 255, 0.03);
-    margin: 3px 2px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-}
-
-#custom-recorder:hover {
-    background-color: rgba(156, 207, 216, 0.15);
-    color: #9ccfd8;
-}
-
-#custom-recorder.recording {
-    color: #ffffff;
-    background-color: rgba(235, 28, 82, 0.85);
-    font-weight: bold;
-    animation: blink 1s linear infinite;
-}
-
 /* Smooth out module transition states across the board */
-#custom-gpu, #custom-ollama, #custom-docker, #cpu, #memory, #custom-storage, #pulseaudio, #network, #bluetooth, #battery, #custom-recorder {
+#custom-gpu, #custom-ollama, #custom-docker, #cpu, #memory, #custom-storage, #pulseaudio, #network, #bluetooth, #battery {
     margin: 3px 1px;
     border-radius: 6px;
 }
