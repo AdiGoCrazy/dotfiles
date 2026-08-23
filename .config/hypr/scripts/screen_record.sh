@@ -24,25 +24,54 @@ play_sound() {
     fi
 }
 
+get_audio_device() {
+    # 1. Prefer realme Buds Bluetooth earphone monitor or microphone input
+    local bt_source=$(pactl list sources short 2>/dev/null | grep -iE "bluez_output.*monitor|bluez_input" | awk '{print $2}' | head -n 1)
+    
+    # 2. Otherwise fall back to system default PipeWire audio source
+    local default_source=$(pactl get-default-source 2>/dev/null)
+
+    if [ -n "$bt_source" ]; then
+        echo "$bt_source"
+    elif [ -n "$default_source" ]; then
+        echo "$default_source"
+    else
+        echo ""
+    fi
+}
+
 start_recording() {
     local geometry="$1"
     local filename="Recording_$(date +'%Y-%m-%d_%H-%M-%S').mp4"
     local filepath="$SAVE_DIR/$filename"
     local start_time=$(date +%s)
+    local audio_dev=$(get_audio_device)
 
     play_sound "$SOUND_START"
 
-    if [ -n "$geometry" ]; then
-        wf-recorder --audio -g "$geometry" -f "$filepath" > /dev/null 2>&1 &
+    local audio_arg=()
+    if [ -n "$audio_dev" ]; then
+        audio_arg=("-a" "$audio_dev")
     else
-        wf-recorder --audio -f "$filepath" > /dev/null 2>&1 &
+        audio_arg=("--audio")
+    fi
+
+    if [ -n "$geometry" ]; then
+        wf-recorder "${audio_arg[@]}" -g "$geometry" -f "$filepath" > /dev/null 2>&1 &
+    else
+        wf-recorder "${audio_arg[@]}" -f "$filepath" > /dev/null 2>&1 &
     fi
 
     local rec_pid=$!
     echo "$rec_pid" > "$PID_FILE"
     echo "$filepath|$start_time" > "$META_FILE"
 
-    dunstify -u normal -i video-x-generic "📹 Screen Recording Started" "Saving to: $filename"
+    local audio_msg="Audio: ${audio_dev:-Default}"
+    if [[ "$audio_dev" == *"bluez"* ]]; then
+        audio_msg="Audio: 🎧 realme Buds Wireless 5 ANC"
+    fi
+
+    dunstify -u normal -i video-x-generic "📹 Screen Recording Started" "$audio_msg\nSaving to: $filename"
 }
 
 stop_recording() {
