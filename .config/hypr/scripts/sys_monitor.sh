@@ -28,9 +28,10 @@ while true; do
         dunstify -u critical "🧠 Memory Exhaustion Warning" "RAM usage has spiked to ${ram_usage}%" -h string:x-dunst-stack-tag:sys-ram
     fi
 
-    if [ "$gpu_usage" -gt "$GPU_THRESHOLD" ]; then
-        dunstify -u critical "⚡ High GPU Load" "GPU utilization is peaking at ${gpu_usage}%" -h string:x-dunst-stack-tag:sys-gpu
-    fi
+    # Disabled High GPU Load notification per user directive
+    # if [ "$gpu_usage" -gt "$GPU_THRESHOLD" ]; then
+    #     dunstify -u critical "⚡ High GPU Load" "GPU utilization is peaking at ${gpu_usage}%" -h string:x-dunst-stack-tag:sys-gpu
+    # fi
 
     sleep 30  # Check stats every 30 seconds
 done
