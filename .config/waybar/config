@@ -24,6 +24,7 @@
     "network",
     "bluetooth",
     "battery",
+    "custom/power_profile",
     "custom/updates",
     "clock",
     "custom/power"
@@ -164,6 +165,14 @@
     "interval": 1,
     "tooltip-format": "󰃭 {:%A, %B %d, %Y}",
     "on-click": "python3 /home/adi/.config/waybar/scripts/clock_docket.py"
+  },
+
+  "custom/power_profile": {
+    "format": "{}",
+    "return-type": "json",
+    "interval": 1,
+    "exec": "python3 /home/adi/.config/waybar/scripts/power_profile_docket.py --status",
+    "on-click": "python3 /home/adi/.config/waybar/scripts/power_profile_docket.py"
   },
 
   "custom/power": {

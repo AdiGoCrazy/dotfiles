@@ -213,8 +213,35 @@ tooltip window box locallabel {
     color: #c4a7e7;
 }
 
+#custom-power_profile {
+    color: #e0def4;
+    padding: 0 12px;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.03);
+    margin: 3px 2px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+#custom-power_profile:hover {
+    background-color: rgba(196, 167, 231, 0.15);
+    color: #c4a7e7;
+}
+
+#custom-power_profile.power-saver {
+    color: #9ccfd8;
+}
+
+#custom-power_profile.balanced {
+    color: #f6c177;
+}
+
+#custom-power_profile.performance {
+    color: #eb1c52;
+}
+
 /* Smooth out module transition states across the board */
-#custom-gpu, #custom-ollama, #custom-docker, #cpu, #memory, #custom-storage, #pulseaudio, #network, #bluetooth, #battery {
+#custom-gpu, #custom-ollama, #custom-docker, #cpu, #memory, #custom-storage, #pulseaudio, #network, #bluetooth, #battery, #custom-power_profile {
     margin: 3px 1px;
     border-radius: 6px;
 }
