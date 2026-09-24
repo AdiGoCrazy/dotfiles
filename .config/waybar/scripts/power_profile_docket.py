@@ -184,7 +184,7 @@ class PowerProfileDocket(Gtk.Window):
         if not success and os.path.exists("/sys/firmware/acpi/platform_profile"):
             try:
                 with open("/sys/firmware/acpi/platform_profile", "w") as f:
-                    f.write(target_prof)
+                    f.write(f"{target_prof}\n")
                 success = True
             except (PermissionError, OSError):
                 # 3. Use pkexec graphical prompt if permission denied
