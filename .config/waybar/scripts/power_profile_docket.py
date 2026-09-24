@@ -166,32 +166,36 @@ class PowerProfileDocket(Gtk.Window):
         self.connect("leave-notify-event", self.on_mouse_leave)
         self.connect("destroy", lambda w: cleanup())
 
-        # Start 1000ms loop to monitor external profile changes
-        GLib.timeout_add(1000, self.update_ui_state)
+        # Start 500ms loop to monitor external profile changes in real-time
+        GLib.timeout_add(500, self.update_ui_state)
         self.update_ui_state()
 
     def set_profile(self, target_prof):
-        # Try powerprofilesctl first
         success = False
+        # 1. Try powerprofilesctl first
         try:
-            subprocess.run(["powerprofilesctl", "set", target_prof], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            success = True
+            res = subprocess.run(["powerprofilesctl", "set", target_prof], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if res.returncode == 0:
+                success = True
         except Exception:
             pass
 
+        # 2. Try direct sysfs write
         if not success and os.path.exists("/sys/firmware/acpi/platform_profile"):
             try:
                 with open("/sys/firmware/acpi/platform_profile", "w") as f:
                     f.write(target_prof)
                 success = True
-            except Exception:
-                # If permission denied, attempt pkexec / tee
+            except (PermissionError, OSError):
+                # 3. Use pkexec graphical prompt if permission denied
                 try:
-                    subprocess.run(f"echo {target_prof} | sudo tee /sys/firmware/acpi/platform_profile", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                    subprocess.Popen(["pkexec", "sh", "-c", f"echo {target_prof} > /sys/firmware/acpi/platform_profile"])
+                    success = True
                 except Exception:
                     pass
 
-        self.update_ui_state()
+        # Delayed state update to allow async write to settle
+        GLib.timeout_add(300, self.update_ui_state)
 
     def update_ui_state(self):
         current = get_current_profile()
